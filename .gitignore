@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+client/node_modules/
+
+# Environment variables
+.env
+
+# Build output
+client/dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads (no subir archivos locales a producción)
+uploads/*
+!uploads/.gitkeep
+
+# Local photos
+fotos_departamento/*
+!fotos_departamento/.gitkeep
+
+# Testing
+coverage/

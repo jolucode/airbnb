@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Star, Shield, Wifi, Coffee, Wind, Car } from 'lucide-react';
+import { Star, Shield, Wifi, Coffee, Wind, Car, ChevronLeft, ChevronRight, X, Maximize2 } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -11,6 +11,8 @@ const PropertyDetail = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [bookingStatus, setBookingStatus] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showLightbox, setShowLightbox] = useState(false);
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -47,12 +49,29 @@ const PropertyDetail = () => {
     }
   };
 
+  const nextImage = () => {
+    if (property && property.images.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % property.images.length);
+    }
+  };
+
+  const prevImage = () => {
+    if (property && property.images.length > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + property.images.length) % property.images.length);
+    }
+  };
+
+  const openLightbox = (index) => {
+    setCurrentImageIndex(index);
+    setShowLightbox(true);
+  };
+
   if (!property) return <div className="p-12 text-center">Cargando...</div>;
 
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-12">
       <h1 className="text-2xl font-semibold mb-4">{property.title}</h1>
-      
+
       <div className="flex items-center gap-4 text-sm font-semibold mb-6 underline">
         <div className="flex items-center gap-1">
           <Star size={14} fill="currentColor" />
@@ -62,24 +81,135 @@ const PropertyDetail = () => {
         <span>{property.location}</span>
       </div>
 
-      {/* Galería Estilo Airbnb */}
-      <div className="grid grid-cols-2 gap-2 h-[450px] rounded-2xl overflow-hidden mb-8">
-        <div className="col-span-1 h-full">
-          <img src={property.images[0]} className="w-full h-full object-cover" />
+      {/* Carrusel de Fotos Estilo Airbnb */}
+      <div className="relative group mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 h-[400px] md:h-[450px] rounded-2xl overflow-hidden border">
+          {/* Imagen principal */}
+          <div 
+            className="h-full cursor-pointer relative"
+            onClick={() => openLightbox(0)}
+          >
+            <img 
+              src={property.images[0] || '/placeholder.jpg'} 
+              alt={property.title}
+              className="w-full h-full object-cover hover:opacity-95 transition-opacity" 
+            />
+            <div className="absolute bottom-3 right-3 bg-white px-3 py-1.5 rounded-lg flex items-center gap-2 text-sm font-semibold shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
+              <Maximize2 size={16} />
+              Ver todas
+            </div>
+          </div>
+          
+          {/* Grid de 4 imágenes secundarias */}
+          <div className="hidden md:grid grid-cols-2 gap-2">
+            {property.images.slice(1, 5).map((img, i) => (
+              <div 
+                key={i} 
+                className="h-full cursor-pointer overflow-hidden"
+                onClick={() => openLightbox(i + 1)}
+              >
+                <img 
+                  src={img} 
+                  alt={`${property.title} ${i + 2}`}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" 
+                />
+              </div>
+            ))}
+            {property.images.length > 5 && (
+              <div 
+                className="h-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+                onClick={() => openLightbox(5)}
+              >
+                <span className="text-lg font-semibold text-gray-700">+{property.images.length - 5}</span>
+              </div>
+            )}
+          </div>
         </div>
-        <div className="col-span-1 grid grid-cols-2 gap-2">
-          {property.images.slice(1, 5).map((img, i) => (
-            <img key={i} src={img} className="w-full h-full object-cover" />
-          ))}
-        </div>
+
+        {/* Botones de navegación del carrusel (solo móvil) */}
+        {property.images.length > 1 && (
+          <>
+            <button
+              onClick={prevImage}
+              className="absolute left-3 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 p-2 rounded-full shadow-lg md:hidden"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              onClick={nextImage}
+              className="absolute right-3 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 p-2 rounded-full shadow-lg md:hidden"
+            >
+              <ChevronRight size={20} />
+            </button>
+            
+            {/* Indicadores */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 md:hidden">
+              {property.images.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentImageIndex(i)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    i === currentImageIndex ? 'bg-white w-4' : 'bg-white/50'
+                  }`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
+
+      {/* Lightbox Modal */}
+      {showLightbox && (
+        <div 
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowLightbox(false)}
+        >
+          <button
+            onClick={() => setShowLightbox(false)}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 z-10"
+          >
+            <X size={32} />
+          </button>
+          
+          <button
+            onClick={(e) => { e.stopPropagation(); prevImage(); }}
+            className="absolute left-4 text-white hover:text-gray-300"
+          >
+            <ChevronLeft size={40} />
+          </button>
+          
+          <button
+            onClick={(e) => { e.stopPropagation(); nextImage(); }}
+            className="absolute right-4 text-white hover:text-gray-300"
+          >
+            <ChevronRight size={40} />
+          </button>
+          
+          <div 
+            className="max-w-5xl max-h-[85vh] flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img 
+              src={property.images[currentImageIndex]} 
+              alt={property.title}
+              className="max-w-full max-h-[85vh] object-contain" 
+            />
+          </div>
+          
+          <div className="absolute bottom-4 text-white text-sm">
+            {currentImageIndex + 1} / {property.images.length}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
         <div className="md:col-span-2">
           <div className="flex justify-between items-center border-b pb-6">
             <div>
               <h2 className="text-xl font-semibold">Anfitrión: Propiedad de Lujo</h2>
-              <p className="text-airbnb-gray">{property.maxGuests} huéspedes · 2 dormitorios · 2 baños</p>
+              <p className="text-airbnb-gray">
+                {property.maxGuests} huéspedes · {property.rooms} dormitorio(s) · 2 baños
+              </p>
             </div>
             <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center text-white font-bold">A</div>
           </div>
@@ -132,16 +262,16 @@ const PropertyDetail = () => {
               <div className="grid grid-cols-2 border-b">
                 <div className="p-3 border-r">
                   <p className="text-[10px] font-bold uppercase">Llegada</p>
-                  <DatePicker 
-                    selected={startDate} 
+                  <DatePicker
+                    selected={startDate}
                     onChange={date => setStartDate(date)}
                     className="w-full text-sm outline-none"
                   />
                 </div>
                 <div className="p-3">
                   <p className="text-[10px] font-bold uppercase">Salida</p>
-                  <DatePicker 
-                    selected={endDate} 
+                  <DatePicker
+                    selected={endDate}
                     onChange={date => setEndDate(date)}
                     className="w-full text-sm outline-none"
                   />
@@ -149,11 +279,11 @@ const PropertyDetail = () => {
               </div>
               <div className="p-3">
                 <p className="text-[10px] font-bold uppercase">Huéspedes</p>
-                <p className="text-sm">1 huésped</p>
+                <p className="text-sm">{property.maxGuests} huéspedes máx.</p>
               </div>
             </div>
 
-            <button 
+            <button
               onClick={handleBooking}
               className="airbnb-btn w-full mb-4"
             >

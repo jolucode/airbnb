@@ -11,9 +11,10 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Servir archivos estáticos (uploads y frontend build)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-// Servir imágenes locales si es necesario
-app.use('/fotos_departamento', express.static('C:/laragon/www/airbnb/fotos_departamento'));
+app.use('/fotos_departamento', express.static(path.join(__dirname, 'fotos_departamento')));
 
 // Database Connection
 mongoose.connect(process.env.MONGO_URI)
@@ -27,7 +28,7 @@ app.use('/api/bookings', require('./routes/bookings'));
 
 // Production Build
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('client/dist'));
+  app.use(express.static(path.join(__dirname, 'client', 'dist')));
   app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html')));
 }
 

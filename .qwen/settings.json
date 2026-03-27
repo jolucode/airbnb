@@ -3,7 +3,10 @@
     "allow": [
       "Bash(npm start)",
       "Bash(npm run *)",
-      "Bash(timeout *)"
+      "Bash(timeout *)",
+      "Bash(mkdir *)",
+      "Bash(type *)",
+      "Bash(echo.)"
     ]
   },
   "$version": 3

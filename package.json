@@ -6,7 +6,11 @@
     "start": "node server.js",
     "dev": "concurrently \"nodemon server.js\" \"cd client && npm run dev\"",
     "build": "cd client && npm install && npm run build",
-    "seed": "node seed.js"
+    "seed": "node seed.js",
+    "heroku-postbuild": "npm run build"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
