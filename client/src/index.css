@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Circular, -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+}
+
+body {
+  @apply text-slate-800 antialiased;
+}
+
+.airbnb-btn {
+  @apply bg-airbnb-pink text-white font-semibold py-3 px-6 rounded-lg hover:brightness-95 transition-all shadow-md active:scale-95;
+}
