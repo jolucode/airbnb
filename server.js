@@ -16,10 +16,17 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/fotos_departamento', express.static(path.join(__dirname, 'fotos_departamento')));
 
-// Database Connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('✅ MongoDB Connected'))
-  .catch(err => console.error('❌ MongoDB Connection Error:', err));
+// Database Connection (async, no bloquea el inicio)
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('✅ MongoDB Connected');
+  } catch (err) {
+    console.error('❌ MongoDB Connection Error:', err.message);
+    console.log('⚠️ Server will continue without database connection');
+  }
+};
+connectDB();
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -33,4 +40,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+});
