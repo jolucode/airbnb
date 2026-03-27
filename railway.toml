@@ -1,0 +1,12 @@
+[build]
+builder = "nixpacks"
+buildCommand = "cd client && npm install --legacy-peer-deps && npx vite build"
+
+[deploy]
+startCommand = "npm start"
+healthcheckPath = "/"
+healthcheckTimeout = 100
+
+[variables]
+NODE_ENV = "production"
+NPM_CONFIG_PRODUCTION = "false"
