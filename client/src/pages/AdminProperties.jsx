@@ -164,17 +164,17 @@ const AdminProperties = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-24 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-airbnb-pink"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24 pb-12">
+    <div className="min-h-screen bg-gray-50 pb-12">
       <div className="px-4 md:px-12">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pt-20 md:pt-24">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate('/admin')}
@@ -182,14 +182,14 @@ const AdminProperties = () => {
             >
               <X size={24} />
             </button>
-            <h1 className="text-2xl font-bold">Gestión de Departamentos</h1>
+            <h1 className="text-xl md:text-2xl font-bold">Gestión de Departamentos</h1>
           </div>
           <button
             onClick={() => openModal()}
-            className="flex items-center gap-2 bg-airbnb-pink text-white px-6 py-3 rounded-full font-semibold hover:bg-pink-700 transition-colors"
+            className="flex items-center justify-center gap-2 bg-airbnb-pink text-white px-6 py-3 rounded-full font-semibold hover:bg-pink-700 transition-colors w-full md:w-auto"
           >
             <Plus size={20} />
-            Nuevo Departamento
+            <span>Nuevo Departamento</span>
           </button>
         </div>
 
