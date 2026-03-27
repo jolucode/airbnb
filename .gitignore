@@ -29,9 +29,5 @@ Thumbs.db
 uploads/*
 !uploads/.gitkeep
 
-# Local photos
-fotos_departamento/*
-!fotos_departamento/.gitkeep
-
 # Testing
 coverage/
