@@ -49,6 +49,27 @@ const Home = () => {
     fetchProperties();
   }, [searchParams]);
 
+  // Cerrar modal con tecla Escape
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        if (showLightbox) {
+          setShowLightbox(false);
+        } else if (showModal) {
+          handleCloseModal();
+        }
+      }
+    };
+
+    if (showModal || showLightbox) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [showModal, showLightbox]);
+
   const clearFilters = () => {
     setFilters({ location: '', guests: '', rooms: '' });
     window.history.pushState({}, '', '/');

@@ -28,6 +28,23 @@ const AdminProperties = () => {
     fetchProperties();
   }, []);
 
+  // Cerrar modal con tecla Escape
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && showModal) {
+        closeModal();
+      }
+    };
+
+    if (showModal) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [showModal]);
+
   const checkAuth = () => {
     const token = localStorage.getItem('token');
     if (!token) {
