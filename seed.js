@@ -13,9 +13,9 @@ const properties = [
     location: "Mirador del Sol",
     price: 150,
     images: [
-      "http://localhost:5000/fotos_departamento/sala.jpeg",
-      "http://localhost:5000/fotos_departamento/areacomun.jpeg",
-      "http://localhost:5000/fotos_departamento/mirador.jpeg"
+      "/fotos_departamento/sala.jpeg",
+      "/fotos_departamento/areacomun.jpeg",
+      "/fotos_departamento/mirador.jpeg"
     ],
     amenities: ["WiFi", "Piscina", "Aire Acondicionado", "Cocina Equipada"],
     maxGuests: 4,
@@ -28,9 +28,9 @@ const properties = [
     location: "Centro Histórico",
     price: 95,
     images: [
-      "http://localhost:5000/fotos_departamento/cuarto.jpeg",
-      "http://localhost:5000/fotos_departamento/pisicna.jpeg",
-      "http://localhost:5000/fotos_departamento/cuarto2.jpeg"
+      "/fotos_departamento/cuarto.jpeg",
+      "/fotos_departamento/pisicna.jpeg",
+      "/fotos_departamento/cuarto2.jpeg"
     ],
     amenities: ["WiFi", "Jacuzzi", "Seguridad 24/7"],
     maxGuests: 2,
@@ -43,9 +43,9 @@ const properties = [
     location: "Residencial Las Palmas",
     price: 120,
     images: [
-      "http://localhost:5000/fotos_departamento/cuarto3.jpeg",
-      "http://localhost:5000/fotos_departamento/cuarto4.jpeg",
-      "http://localhost:5000/fotos_departamento/cuarto5.jpeg"
+      "/fotos_departamento/cuarto3.jpeg",
+      "/fotos_departamento/cuarto4.jpeg",
+      "/fotos_departamento/cuarto5.jpeg"
     ],
     amenities: ["Parking Gratuito", "Lavadora", "TV por cable"],
     maxGuests: 6,
