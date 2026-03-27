@@ -1,6 +1,5 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd client && npm install --legacy-peer-deps && npx vite build"
 
 [deploy]
 startCommand = "npm start"
