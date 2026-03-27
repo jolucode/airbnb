@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import PropertyCard from '../components/PropertyCard';
-import { X, Star, Shield, Wifi, Coffee, Wind, Car, Users, HomeIcon, Calendar } from 'lucide-react';
+import { X, Star, Shield, Wifi, Coffee, Wind, Car, Users, HomeIcon, Calendar, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -20,6 +20,8 @@ const Home = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [bookingStatus, setBookingStatus] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showLightbox, setShowLightbox] = useState(false);
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -63,7 +65,25 @@ const Home = () => {
     setShowModal(false);
     setSelectedProperty(null);
     setBookingStatus(null);
+    setCurrentImageIndex(0);
     document.body.style.overflow = 'auto';
+  };
+
+  const nextImage = () => {
+    if (selectedProperty && selectedProperty.images.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % selectedProperty.images.length);
+    }
+  };
+
+  const prevImage = () => {
+    if (selectedProperty && selectedProperty.images.length > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + selectedProperty.images.length) % selectedProperty.images.length);
+    }
+  };
+
+  const openLightbox = (index) => {
+    setCurrentImageIndex(index);
+    setShowLightbox(true);
   };
 
   const calculateTotal = () => {
@@ -178,27 +198,103 @@ const Home = () => {
               </button>
             </div>
 
-            {/* Galería de Imágenes */}
-            <div className="grid grid-cols-2 gap-1 p-4">
-              <div className="col-span-2 md:col-span-1 h-48 md:h-64 rounded-xl overflow-hidden">
-                <img 
-                  src={selectedProperty.images[0]} 
-                  alt={selectedProperty.title}
-                  className="w-full h-full object-cover"
-                />
+            {/* Galería de Imágenes Estilo Airbnb */}
+            <div className="relative group mb-4">
+              <div className="grid grid-cols-1 h-48 md:h-64 rounded-xl overflow-hidden border">
+                {/* Imagen principal */}
+                <div 
+                  className="h-full cursor-pointer relative"
+                  onClick={() => openLightbox(0)}
+                >
+                  <img 
+                    src={selectedProperty.images[currentImageIndex] || '/placeholder.jpg'} 
+                    alt={selectedProperty.title}
+                    className="w-full h-full object-cover"
+                  />
+                  {selectedProperty.images.length > 1 && (
+                    <div className="absolute bottom-2 right-2 bg-white px-3 py-1.5 rounded-lg flex items-center gap-2 text-sm font-semibold shadow-md">
+                      <Maximize2 size={14} />
+                      Ver todas
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="hidden md:grid grid-cols-2 gap-1">
-                {selectedProperty.images.slice(1, 5).map((img, i) => (
-                  <div key={i} className="h-32 rounded-lg overflow-hidden">
-                    <img 
-                      src={img} 
-                      alt={`${selectedProperty.title} ${i + 2}`}
-                      className="w-full h-full object-cover"
-                    />
+
+              {/* Botones de navegación (solo si hay más de 1 foto) */}
+              {selectedProperty.images.length > 1 && (
+                <>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 p-2 rounded-full shadow-lg"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 p-2 rounded-full shadow-lg"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                  
+                  {/* Indicadores */}
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+                    {selectedProperty.images.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(i); }}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          i === currentImageIndex ? 'bg-white w-4' : 'bg-white/50'
+                        }`}
+                      />
+                    ))}
                   </div>
-                ))}
-              </div>
+                </>
+              )}
             </div>
+
+            {/* Lightbox Modal */}
+            {showLightbox && (
+              <div 
+                className="fixed inset-0 bg-black/90 z-[70] flex items-center justify-center p-4"
+                onClick={() => setShowLightbox(false)}
+              >
+                <button
+                  onClick={() => setShowLightbox(false)}
+                  className="absolute top-4 right-4 text-white hover:text-gray-300 z-10"
+                >
+                  <X size={32} />
+                </button>
+                
+                <button
+                  onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                  className="absolute left-4 text-white hover:text-gray-300"
+                >
+                  <ChevronLeft size={40} />
+                </button>
+                
+                <button
+                  onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                  className="absolute right-4 text-white hover:text-gray-300"
+                >
+                  <ChevronRight size={40} />
+                </button>
+                
+                <div 
+                  className="max-w-4xl max-h-[85vh] flex items-center justify-center"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <img 
+                    src={selectedProperty.images[currentImageIndex]} 
+                    alt={selectedProperty.title}
+                    className="max-w-full max-h-[85vh] object-contain rounded-lg"
+                  />
+                </div>
+                
+                <div className="absolute bottom-4 text-white text-sm font-semibold">
+                  {currentImageIndex + 1} / {selectedProperty.images.length}
+                </div>
+              </div>
+            )}
 
             {/* Información Principal */}
             <div className="px-4 pb-4 space-y-4">
